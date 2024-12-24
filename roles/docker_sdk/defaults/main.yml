@@ -1,0 +1,35 @@
+---
+# List of RPM/Apt packages to install.
+docker_sdk_packages:
+  - "python3-setuptools"
+  - "python3-pip"
+
+# List of Python packages to install via Pip.
+# NOTE(hrw) docker 2.4.2 is in kolla-ansible requirements
+# NOTE(mnasiadka): docker 5.0.0 lacks six in deps but requires it
+# NOTE(mnasiadka): requests and urllib3 as a workaround for https://github.com/docker/docker-py/issues/3113
+docker_sdk_pip_packages:
+  - "docker>=2.4.2,<5.0.0"
+  - "requests<2.29.0"
+  - "urllib3<2"
+
+# Version of python used to execute Ansible modules.
+host_python_version: "{{ ansible_facts.python.version.major }}.{{ ansible_facts.python.version.minor }}"
+
+# Path to a virtualenv in which to install python packages. If None, a
+# virtualenv will not be used.
+virtualenv:
+
+# Whether the virtualenv will inherit packages from the global site-packages
+# directory. This is typically required for modules such as yum and apt which
+# are not available on PyPI.
+virtualenv_site_packages: True
+
+create_kolla_user: True
+kolla_user: "kolla"
+
+# Owner of the virtualenv.
+docker_sdk_virtualenv_owner: "{{ kolla_user if create_kolla_user | bool else omit }}"
+
+# A pip constraints file to use when installing the Docker SDK.
+docker_sdk_upper_constraints_file:
